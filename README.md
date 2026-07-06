@@ -1,58 +1,89 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Amplifi — Gamified Employee Marketing & ABM Referral Tracker
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Amplifi is a gamified enterprise employee advocacy and referral platform built with Laravel. It allows company employees to generate unique tracking links for corporate marketing campaigns, share them across social media circles, and earn performance points. It includes Account-Based Marketing (ABM) lookup simulation and multi-layered fraud prevention tools.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🚀 Core Features
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 🛡️ 1. Multi-Tiered Access Security
+* **Role-Based Middlewares:** Restricts system pathways based on administrative status. Standard employee profiles access sharing grids, while administrative actions are blocked via forced `HTTP 403 Forbidden` barriers.
+* **Isolated Routing Schemas:** Separates client redirect routers from secure application dashboards to prevent interface conflicts.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 🌐 2. Enterprise Content Lifecycle & Administration
+* **Dynamic Campaign Cards:** Administrators can deploy marketing plays live to the employee feed.
+* **Full CRUD Management:** Built-in dashboard supporting immediate configuration changes, live link counters, and safe cascading deletion rules.
 
-## Learning Laravel
+### 🏆 3. Gamification Mechanics & Social Amplification
+* **One-Click Share Links:** Employees generate isolated, random short codes (`/share/{code}`) to easily attribute external link traffic.
+* **Live Standings Leaderboard:** Evaluates points dynamically and immediately shifts profile standings, pushing top advocates up the podium.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 🎯 4. Simulated Account-Based Marketing (ABM) Tracking
+* **Corporate Domain Identification:** Intercepts incoming client redirects and evaluates network vectors against targeted high-value enterprise accounts.
+* **ABM Bonus Engine:** Triggers a **+100 Points Bonus** payout to the sharing employee if an incoming visitor is successfully matched to a target account.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 🚫 5. Anti-Fraud Filtering
+* **Network Fingerprinting:** Tracks and cross-references historical visitor IP data before updating platform variables.
+* **Passive Handover Fail-Safe:** Prevents score inflation from duplicate clicks without breaking the user experience; non-unique visitors are still cleanly forwarded to the destination landing page.
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+---
 
-## Agentic Development
+## 🛠️ Tech Stack & Architecture
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+* **Framework:** Laravel (v13.x) & PHP (v8.5.x)
+* **Frontend UI Layout:** Tailwind CSS & Blade Template Engine
+* **Database Layer:** Eloquent ORM (MySQL / SQLite)
+* **Authentication Scaffold:** Laravel Breeze / Jetstream Starter Systems
 
-```bash
-composer require laravel/boost --dev
+---
 
-php artisan boost:install
+## 📂 Project Architecture Showcase
+
+### 🎛️ Routing Hub (`routes/web.php`)
+Secures routes under isolated permission groups using standard Laravel authentication wrappers:
+* `/dashboard` — Standard Employee Advocacy View
+* `/admin` — Protected Management Control Hub
+* `/share/{code}` — Public Tracker Engine Endpoint
+
+### 🧠 Tracker Hub Logic (`TrackingController.php`)
+```php
+// Prevent Point Fraud & Log ABM Domain Matches
+\(alreadyClicked = Click::where('sharable_link_id',\)link->id)
+                       ->where('ip_address', \$ipAddress)
+                       ->exists();
+
+if (!\$alreadyClicked) {
+    if (\(detectedDomain) {\)pointsEarned += 100; // Apply ABM Target Account Bonus
+    }
+    link->user->increment('points', pointsEarned);
+}
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+---
 
-## Contributing
+## 💻 Local Installation Guide
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+1. Clone this repository locally:
+   ```bash
+   git clone https://github.com
+   cd amplifi
+   ```
+2. Install dependency files:
+   ```bash
+   composer install
+   npm install && npm run dev
+   ```
+3. Set up environment configuration:
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+4. Build database architecture and apply schema updates:
+   ```bash
+   php artisan migrate
+   ```
+5. Seed test accounts and boot up your local instance:
+   ```bash
+   php artisan db:seed --class=AdminUserSeeder
+   php artisan serve
+   ```
