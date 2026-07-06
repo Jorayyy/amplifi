@@ -8,11 +8,21 @@ use Illuminate\Http\Request;
 class AdminController extends Controller
 {
     // 1. Show the creation form and a list of existing campaigns
+        // 1. Show the creation form and a list of existing campaigns + rewards ledger
     public function index()
     {
         $campaigns = Content::latest()->get();
-        return view('admin.index', compact('campaigns'));
+        
+        // Fetch all automatically issued milestones with user details
+        $rewardsLog = \DB::table('reward_milestones')
+            ->join('users', 'reward_milestones.user_id', '=', 'users.id')
+            ->select('reward_milestones.*', 'users.name as employee_name', 'users.email as employee_email')
+            ->orderBy('reward_milestones.created_at', 'desc')
+            ->get();
+
+        return view('admin.index', compact('campaigns', 'rewardsLog'));
     }
+
 
     // 2. Process and save a new campaign card
     public function store(Request $request)

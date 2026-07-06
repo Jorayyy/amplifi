@@ -11,23 +11,22 @@ return new class extends Migration
      */
     public function up(): void
 {
-    Schema::create('contents', function (Blueprint $table) {
+    Schema::create('reward_milestones', function (Blueprint $table) {
         $table->id();
-        $table->string('title');
-        
-        // FIX: Change 'description' to 'instructions' right here!
-        $table->text('instructions'); 
-        
-        $table->string('original_url');
-        $table->integer('points_per_click');
+        $table->foreignId('user_id')->constrained()->onDelete('cascade');
+        $table->integer('points_threshold');
+        $table->string('reward_type'); // e.g., 'Gift Card', 'Performance Bonus'
+        $table->boolean('is_distributed')->default(false);
         $table->timestamps();
     });
 }
+
+
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('contents');
+        Schema::dropIfExists('reward_milestones');
     }
 };

@@ -84,10 +84,67 @@ class TrackingController extends Controller
 
             $employee = $link->user;
             $employee->increment('points', $pointsEarned);
+
+            // 🔥 AUTOMATION TRIGGER: Evaluate KPIs and distribute rewards instantly!
+            $this->checkAndDistributeRewards($employee);
         }
 
         // 4. Redirect out to the target article (Always redirects, even if fraud)
         return redirect()->away($link->content->original_url);
     }
+
+    /**
+     * Automated Incentive Evaluation Engine
+     */
+    protected function checkAndDistributeRewards($employee)
+    {
+        // Define automated milestone incentive tiers linked to employee KPIs
+        $milestones = [
+            100  => ['type' => '🌟 $10 Starbucks Gift Card', 'threshold' => 100],
+            500  => ['type' => '🚀 $50 Amazon Gift Card', 'threshold' => 500],
+            1000 => ['type' => '🏆 $100 Performance Cash Bonus + Executive Recognition', 'threshold' => 1000],
+        ];
+
+        foreach ($milestones as $points => $meta) {
+            if ($employee->points >= $points) {
+                // Verify if this milestone reward has already been issued to protect company budgets
+                $alreadyRewarded = \DB::table('reward_milestones')
+                    ->where('user_id', $employee->id)
+                    ->where('points_threshold', $points)
+                    ->exists();
+
+                if (!$alreadyRewarded) {
+                    // 1. Log the reward issuance event permanently into the database log
+                    \DB::table('reward_milestones')->insert([
+                        'user_id' => $employee->id,
+                        'points_threshold' => $points,
+                        'reward_type' => $meta['type'],
+                        'is_distributed' => true,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+
+                    // 2. Broadcast the automated achievement announcement to the workplace channel
+                    $this->sendAutomatedCompanyAlert($employee, $meta['type']);
+                }
+            }
+        }
+    }
+
+    /**
+     * Dispatch External Outbound Communication Webhook Payload
+     */
+    protected function sendAutomatedCompanyAlert($employee, $rewardType)
+    {
+        $slackWebhookUrl = env('SLACK_WEBHOOK_URL');
+
+        // Fires a secure network request containing formatted Slack markdown message layout blocks
+        if ($slackWebhookUrl) {
+            \Illuminate\Support\Facades\Http::post($slackWebhookUrl, [
+                'text' => "🔥 *AMPLIFI REWARD AUTOMATION ENGINE* \n👉 *{$employee->name}* just hit an enterprise milestone and was automatically issued: *{$rewardType}*! \nKeep deploying those ABM plays! 🚀"
+            ]);
+        }
+    }
+
 
 }
