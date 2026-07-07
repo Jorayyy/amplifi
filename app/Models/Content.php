@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 
-#[Fillable(['title', 'description', 'original_url', 'points_per_click'])]
+#[Fillable(['title', 'instructions', 'original_url', 'points_per_click'])]
 class Content extends Model
 {
     // Forces Laravel to always remember to load the connected links automatically
